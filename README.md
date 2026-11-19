@@ -1,57 +1,55 @@
-# Website Pendaftaran Bimbel
+# Bimbel Enrollment Portal
 
-Aplikasi web *mobile-first* untuk pendaftaran bimbingan belajar tatap muka secara online—mulai dari eksplorasi katalog program, pemilihan kelas & jadwal dengan kuota *real-time*, reservasi kuota *atomic*, hingga pembayaran lunas otomatis via Midtrans dan pengelolaan operasional di Dashboard Admin.
+A mobile-first tutoring center registration portal built with **Laravel 13** and **Tailwind CSS v4**, featuring real-time class quota tracking, atomic seat reservation (`lockForUpdate`), Midtrans Snap payment integration, automated WhatsApp & Email notifications, and an operational Admin Dashboard.
 
-## Fitur Utama
+## Features
 
-### Sisi Publik (Wali / Siswa)
-* **Landing Page & Katalog Program:** Profil bimbel, alur pendaftaran 4 langkah, filter program berdasarkan jenjang (`SD`, `SMP`, `SMA`, `UTBK`, `UMUM`), serta detail kelas (jadwal, pengajar, ruang, dan sisa kuota *real-time*).
-* **Autentikasi Fleksibel:** Registrasi dan login dengan Email/Password (akun langsung aktif, dilengkapi *Reset Password*) serta login **Google OAuth** via Laravel Socialite.
-* **Formulir Pendaftaran & Kebijakan Refund:** Input data siswa dan wali, ringkasan kelas terpilih, serta persetujuan syarat ketentuan dan kebijakan *non-refund* (kecuali kelas dibatalkan bimbel atau terjadi pembayaran ganda).
-* **Pembayaran Lunas 24 Jam (Midtrans Snap):** Mendukung Virtual Account, QRIS, dan E-Wallet dengan *countdown timer* batas waktu bayar 24 jam.
-* **Riwayat & Bukti Pendaftaran:** Halaman konfirmasi sukses (dengan tombol salin nomor pendaftaran) serta dashboard riwayat & status pendaftaran pengguna.
+### Public Portal (Parents / Guardians & Students)
+* **Landing Page & Program Catalog:** Overview of the tutoring center, 4-step enrollment flow, level filtering (`SD`, `SMP`, `SMA`, `UTBK`, `UMUM`), and real-time class details (schedule, instructor, room, and remaining seats).
+* **Flexible Authentication:** Email/Password registration & login (instantly active with password reset support) alongside **Google OAuth** via Laravel Socialite.
+* **Enrollment Form & Non-Refund Policy:** Student and guardian data collection, selected class summary, and explicit agreement to terms and the non-refundable payment policy (with exceptions for class cancellation by the center or duplicate payment).
+* **24-Hour Midtrans Snap Checkout:** Full upfront payment supporting Virtual Accounts, QRIS, and E-Wallets with a live 24-hour countdown timer.
+* **Confirmation & Registration History:** Instant confirmation page (with one-click registration number copy) and a personal dashboard to track registration statuses and payment receipts.
 
-### Sisi Admin
-* **Portal Admin Terpisah:** Mendukung autentikasi tunggal (`password` atau `google` via `ADMIN_AUTH_METHOD`) dengan pemisahan peran **Super Admin** dan **Staf Admin**.
-* **Dashboard Ringkas:** Metrik total pendaftar, pendapatan lunas, kelas hampir/sudah penuh, dan tabel sisa kuota per kelas.
-* **Manajemen Program & Kelas:** CRUD program, kelas, jadwal, ruang, pengajar, dan kapasitas kuota.
-* **Manajemen Pendaftar & Pembayaran:** Pencarian, filter (program, status, rentang tanggal), verifikasi pembayaran manual, ubah status (termasuk pencatatan pengecualian *refund*), dan ekspor data ke **CSV / Excel (`.xlsx`)**.
+### Admin Dashboard
+* **Dedicated Admin Authentication:** Supports single-method authentication (`password` or `google` via `ADMIN_AUTH_METHOD`) with role-based access control (**Super Admin** and **Staff Admin**).
+* **Operational Overview:** KPI summary cards (total registrations, confirmed enrollments, paid revenue, nearly-full classes) and a live class quota table with progress bars.
+* **Program & Class Management:** Full CRUD for programs, classes, schedules, rooms, instructors, and seat capacities.
+* **Registration & Payment Management:** Search, multi-criteria filtering (program, status, date range), manual payment verification, status updates (including refund exception notes), and **CSV / Excel (`.xlsx`)** export.
 
-## Highlight Teknis
-* **Anti-Overbooking (`lockForUpdate`):** Penguncian baris kelas di dalam transaksi database (`DB::transaction`) saat *checkout* untuk mencegah *double booking* kuota.
-* **Webhook Midtrans Aman & Idempoten:** Validasi SHA-512 `signature_key`, *idempotency check* berbasis `order_id`, dan deteksi otomatis kasus pembayaran ganda.
-* **Auto-Expire 24 Jam:** Command `registrations:expire-pending` yang dijadwalkan setiap 5 menit melalui Laravel Scheduler untuk membatalkan tagihan kedaluwarsa dan mengembalikan kuota kelas secara *atomic*.
-* **Notifikasi Antrean (Queue Jobs):** Pengiriman konfirmasi pendaftaran otomatis via Email (Resend/SMTP) dan WhatsApp (Fonnte API) setelah pembayaran lunas.
+## Technical Highlights
+* **Concurrency-Safe Quota Reservation:** Uses `DB::transaction()` with `lockForUpdate()` during checkout to prevent overbooking under concurrent requests.
+* **Secure & Idempotent Midtrans Webhook:** Validates SHA-512 `signature_key`, enforces `order_id` idempotency, and automatically flags duplicate payments for admin refund review.
+* **Automated 24-Hour Expiration:** Runs `registrations:expire-pending` every 5 minutes via Laravel Scheduler to cancel unpaid registrations and atomically release reserved seats.
+* **Queued Notifications:** Dispatches confirmation Emails (Resend/SMTP) and WhatsApp messages (Fonnte API) asynchronously after payment settlement.
 
 ## Tech Stack
 * **Backend:** Laravel 13 (PHP 8.4), Eloquent ORM, Queue, Task Scheduler
 * **Frontend:** Laravel Blade, Tailwind CSS v4, Vite
-* **Database:** MySQL (disarankan untuk produksi) / SQLite (pengujian lokal)
-* **Integrasi:** Laravel Socialite (Google OAuth), Midtrans PHP SDK, Maatwebsite Excel, Fonnte WhatsApp API, Resend / SMTP
+* **Database:** MySQL (recommended for production) / SQLite (local testing)
+* **Integrations:** Laravel Socialite, Midtrans PHP SDK, Maatwebsite Excel, Fonnte WhatsApp API, Resend / SMTP
 
-## Instalasi Lokal
+## Local Setup
 
-1. **Clone repository & masuk ke direktori proyek:**
+1. **Clone the repository:**
    ```bash
-   git clone <url-repository-anda>
-   cd website-pendaftaran-bimbel
+   git clone https://github.com/h4monn/bimbel-enrollment-portal.git
+   cd bimbel-enrollment-portal
    ```
 
-2. **Install dependency PHP & JavaScript:**
+2. **Install PHP & frontend dependencies:**
    ```bash
    composer install
    npm install
    npm run build
    ```
 
-3. **Salin file environment & generate application key:**
+3. **Configure environment variables:**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-
-4. **Konfigurasi `.env`:**
-   Atur koneksi database (`DB_CONNECTION=mysql` atau `sqlite`), serta kredensial layanan pihak ketiga:
+   Update `.env` with your database (`mysql` or `sqlite`) and third-party credentials:
    ```env
    ADMIN_AUTH_METHOD=password
 
@@ -67,12 +65,12 @@ Aplikasi web *mobile-first* untuk pendaftaran bimbingan belajar tatap muka secar
    FONNTE_TOKEN=
    ```
 
-5. **Jalankan database migration:**
+4. **Run database migrations:**
    ```bash
    php artisan migrate
    ```
 
-6. **Buat akun Super Admin awal (via Tinker):**
+5. **Create an initial Super Admin account (via Tinker):**
    ```bash
    php artisan tinker
    ```
@@ -86,15 +84,15 @@ Aplikasi web *mobile-first* untuk pendaftaran bimbingan belajar tatap muka secar
    ]);
    ```
 
-7. **Jalankan server pengembangan, queue worker, dan scheduler:**
+6. **Start the local server, queue worker, and scheduler:**
    ```bash
    php artisan serve
    php artisan queue:work
    php artisan schedule:work
    ```
 
-## Endpoint Penting
-* Halaman Publik: `/` & `/program`
-* Autentikasi Pendaftar: `/login`, `/register`
-* Portal Admin: `/admin/login` & `/admin`
-* Webhook Midtrans: `POST /api/webhooks/midtrans`
+## Key Endpoints
+* **Public Portal:** `/` and `/program`
+* **User Auth:** `/login`, `/register`
+* **Admin Portal:** `/admin/login` and `/admin`
+* **Midtrans Webhook:** `POST /api/webhooks/midtrans`
