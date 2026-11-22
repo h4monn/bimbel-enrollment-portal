@@ -1,27 +1,27 @@
 @extends('layouts.public')
 
-@section('title', 'Reset Password')
+@section('title', 'Reset Password — Bimbel Cendekia')
+@section('meta_description', 'Minta tautan pengaturan ulang password untuk akun pendaftar Anda.')
 
 @section('content')
-<div class="mx-auto max-w-sm px-4 py-12 sm:py-16">
-    <div class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-        <h1 class="text-xl font-bold text-slate-900">Reset Password</h1>
-        <p class="mt-1 text-sm text-slate-500">Masukkan email akun Anda untuk menerima tautan reset password.</p>
+<div class="wrap">
+  <div class="auth-box">
+    <h1 style="font-size: var(--t-h2); margin-bottom: var(--s-2);">Atur ulang password</h1>
+    <p class="t-small muted" style="margin-bottom: var(--s-5);">Masukkan email akun yang terdaftar untuk menerima tautan password baru.</p>
 
-        <form method="POST" action="{{ route('password.email') }}" class="mt-6 space-y-4">
-            @csrf
-            <div>
-                <label for="email" class="block text-xs font-semibold text-slate-700">Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus
-                       class="mt-1.5 block w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20">
-                @error('email') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
+    <form method="POST" action="{{ route('password.email') }}" class="form" style="grid-template-columns: 1fr;">
+      @csrf
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="email" @error('email') aria-invalid="true" aria-describedby="err-email" @enderror>
+        @error('email') <span id="err-email" class="field__error">{{ $message }}</span> @enderror
+      </div>
 
-            <button type="submit"
-                    class="min-h-[44px] w-full cursor-pointer rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-700 transition-colors">
-                Kirim Tautan Reset
-            </button>
-        </form>
-    </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn--primary" style="width:100%;">Kirim tautan reset</button>
+      </div>
+      <p class="t-small"><a href="{{ route('login') }}" class="link">Kembali ke halaman masuk</a></p>
+    </form>
+  </div>
 </div>
 @endsection

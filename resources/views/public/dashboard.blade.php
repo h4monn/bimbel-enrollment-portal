@@ -1,94 +1,85 @@
 @extends('layouts.public')
 
-@section('title', 'Riwayat & Status Pendaftaran')
+@section('title', 'Riwayat Pendaftaran — Bimbel Cendekia')
+@section('meta_description', 'Daftar status pendaftaran kelas, batas waktu tagihan, dan bukti pembayaran akun Anda.')
 
 @section('content')
-<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Akun Saya</p>
-            <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Riwayat & Status Pendaftaran</h1>
-            <p class="mt-1 text-xs text-slate-600">Pantau status pendaftaran, batas waktu pembayaran, dan bukti konfirmasi kelas.</p>
-        </div>
-        <a href="{{ route('programs.index') }}"
-           class="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-sky-900 px-5 py-2.5 text-xs font-semibold text-white hover:bg-slate-900 transition-colors">
-            Daftar Program Baru
-        </a>
+<div class="wrap">
+  <div class="page-header">
+    <div>
+      <h1>Riwayat pendaftaran</h1>
+      <p>Status pendaftaran kelas, nomor registrasi, dan bukti pembayaran akun {{ auth('web')->user()->name }}.</p>
     </div>
+    <a href="{{ route('programs.index') }}" class="btn btn--primary">Daftar kelas baru</a>
+  </div>
 
-    @if ($registrations->isEmpty())
-        <div class="mt-8 rounded-xl border border-slate-200 bg-white p-10 text-center">
-            <p class="text-sm font-bold text-slate-800">Anda belum memiliki riwayat pendaftaran.</p>
-            <p class="mt-1 text-xs text-slate-500">Pilih program belajar untuk mulai mendaftarkan siswa.</p>
-            <a href="{{ route('programs.index') }}"
-               class="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-sky-900 px-5 py-2.5 text-xs font-semibold text-white hover:bg-slate-900">
-                Lihat Katalog Program
-            </a>
-        </div>
-    @else
-        <div class="mt-6 space-y-4">
-            @foreach ($registrations as $registration)
-                @php
-                    $statusStyles = [
-                        'pending_payment' => ['label' => 'Menunggu Pembayaran', 'class' => 'bg-amber-100 text-amber-800'],
-                        'paid' => ['label' => 'Lunas', 'class' => 'bg-emerald-100 text-emerald-800'],
-                        'confirmed' => ['label' => 'Lunas & Dikonfirmasi', 'class' => 'bg-emerald-100 text-emerald-800'],
-                        'cancelled' => ['label' => 'Dibatalkan / Kedaluwarsa', 'class' => 'bg-rose-100 text-rose-800'],
-                        'refunded' => ['label' => 'Refund', 'class' => 'bg-rose-100 text-rose-800'],
-                    ];
-                    $badge = $statusStyles[$registration->status] ?? ['label' => $registration->status, 'class' => 'bg-slate-100 text-slate-700'];
-                @endphp
-
-                <div class="rounded-xl border border-sky-200 bg-white p-5 sm:p-6">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2.5">
-                                <span class="font-mono text-xs font-bold text-sky-900">{{ $registration->registration_number }}</span>
-                                <span class="rounded-md px-2.5 py-0.5 text-[11px] font-bold {{ $badge['class'] }}">
-                                    {{ $badge['label'] }}
-                                </span>
-                            </div>
-                            <h2 class="mt-2 text-base font-bold text-slate-900">
-                                {{ $registration->classRoom->program->name }} - {{ $registration->classRoom->name }}
-                            </h2>
-                            <p class="mt-1 text-xs text-slate-600">
-                                Siswa: <strong>{{ $registration->student->full_name }}</strong> |
-                                {{ $registration->classRoom->schedule_days }}, {{ $registration->classRoom->schedule_time }} (Ruang {{ $registration->classRoom->room }})
-                            </p>
-                        </div>
-
-                        <div class="sm:text-right shrink-0">
-                            <p class="text-base font-extrabold tabular-nums text-slate-900">Rp {{ number_format($registration->total_amount, 0, ',', '.') }}</p>
-                            @if ($registration->latestPayment?->paid_at)
-                                <p class="text-[11px] text-emerald-800 font-semibold mt-0.5">
-                                    Lunas {{ $registration->latestPayment->paid_at->translatedFormat('d M Y, H:i') }}
-                                </p>
-                            @elseif ($registration->status === 'pending_payment')
-                                <p class="text-[11px] text-amber-800 font-semibold mt-0.5">
-                                    Batas bayar: {{ $registration->expired_at->translatedFormat('d M Y, H:i') }} WIB
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-3.5 text-xs text-slate-500">
-                        <span>Metode: {{ $registration->latestPayment?->payment_method ? strtoupper($registration->latestPayment->payment_method) : 'Belum dipilih' }}</span>
-
-                        @if ($registration->status === 'pending_payment')
-                            <a href="{{ route('registrations.checkout', $registration) }}"
-                               class="inline-flex min-h-[40px] items-center rounded-lg bg-sky-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-900 transition-colors">
-                                Lanjutkan Bayar
-                            </a>
-                        @elseif (in_array($registration->status, ['paid', 'confirmed'], true))
-                            <a href="{{ route('registrations.success', $registration) }}"
-                               class="inline-flex min-h-[40px] items-center rounded-lg border border-sky-200 bg-sky-50 px-4 py-2 text-xs font-bold text-sky-900 hover:bg-sky-100 transition-colors">
-                                Lihat Bukti Pendaftaran
-                            </a>
-                        @endif
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @endif
+  @if ($registrations->isEmpty())
+    <div class="plain-box stack-4">
+      <p>Belum ada pendaftaran kelas yang tercatat pada akun ini.</p>
+      <div><a class="link" href="{{ route('programs.index') }}">Lihat daftar program dan jadwal</a></div>
+    </div>
+  @else
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nomor pendaftaran</th>
+            <th>Siswa dan kelas</th>
+            <th>Status</th>
+            <th>Keterangan pembayaran</th>
+            <th class="num">Total</th>
+            <th class="num">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($registrations as $registration)
+            @php
+                $statusMap = [
+                    'pending_payment' => ['label' => 'Menunggu pembayaran', 'class' => 'tag--warn'],
+                    'paid' => ['label' => 'Lunas', 'class' => 'tag--ok'],
+                    'confirmed' => ['label' => 'Dikonfirmasi', 'class' => 'tag--ok'],
+                    'cancelled' => ['label' => 'Dibatalkan', 'class' => 'tag--err'],
+                    'refunded' => ['label' => 'Refund', 'class' => 'tag--err'],
+                ];
+                $st = $statusMap[$registration->status] ?? ['label' => $registration->status, 'class' => ''];
+            @endphp
+            <tr>
+              <td>
+                <span class="mono">{{ $registration->registration_number }}</span>
+                <span class="subline">{{ $registration->created_at?->format('d/m/Y H.i') }}</span>
+              </td>
+              <td>
+                <strong>{{ $registration->student->full_name }}</strong>
+                <span class="subline">{{ $registration->classRoom->program->name }} &mdash; {{ $registration->classRoom->name }} ({{ $registration->classRoom->schedule_days }})</span>
+              </td>
+              <td><span class="tag {{ $st['class'] }}">{{ $st['label'] }}</span></td>
+              <td>
+                @if ($registration->latestPayment?->paid_at)
+                  Lunas {{ $registration->latestPayment->paid_at->format('d/m/Y H.i') }}
+                @elseif ($registration->status === 'pending_payment')
+                  Batas bayar {{ $registration->expired_at->format('d/m/Y H.i') }}
+                @else
+                  &mdash;
+                @endif
+                @if ($registration->latestPayment?->payment_method)
+                  <span class="subline">{{ strtoupper($registration->latestPayment->payment_method) }}</span>
+                @endif
+              </td>
+              <td class="num"><strong>Rp {{ number_format($registration->total_amount, 0, ',', '.') }}</strong></td>
+              <td class="num">
+                @if ($registration->status === 'pending_payment')
+                  <a class="btn btn--primary btn--sm" href="{{ route('registrations.checkout', $registration) }}">Lanjutkan bayar</a>
+                @elseif (in_array($registration->status, ['paid', 'confirmed'], true))
+                  <a class="btn btn--secondary btn--sm" href="{{ route('registrations.success', $registration) }}">Lihat bukti</a>
+                @else
+                  <span class="t-small muted">&mdash;</span>
+                @endif
+              </td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  @endif
 </div>
 @endsection

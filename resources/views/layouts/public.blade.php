@@ -1,154 +1,182 @@
-<!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<!doctype html>
+@php
+    $isHome = request()->routeIs('home');
+@endphp
+<html lang="id" data-type="place" @if($isHome) data-page-mode="short" @endif data-radius="sharp" data-buttons="arrow" data-motion>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Kumon') — Pendaftaran Kelas Tatap Muka</title>
-    <meta name="description" content="@yield('meta_description', 'Daftar bimbingan belajar tatap muka untuk SD, SMP, SMA, dan UTBK secara online dengan kuota kelas real-time.')">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @stack('head')
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>@yield('title', 'Bimbel Cendekia: bimbingan belajar tatap muka SD hingga UTBK')</title>
+<meta name="description" content="@yield('meta_description', 'Pendaftaran kelas tatap muka SD, SMP, SMA, dan UTBK. Lihat jadwal ruang, sisa kuota langsung, dan selesaikan biaya lunas dalam 24 jam.')">
+<meta property="og:type" content="website">
+<meta property="og:title" content="@yield('title', 'Bimbel Cendekia: bimbingan belajar tatap muka SD hingga UTBK')">
+<meta property="og:description" content="@yield('meta_description', 'Pendaftaran kelas tatap muka SD, SMP, SMA, dan UTBK dengan kuota per ruang dan pembayaran daring 24 jam.')">
+<meta property="og:image" content="{{ asset('share.jpg') }}">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+<meta name="theme-color" content="#f8fafb">
+<!-- <link rel="canonical" href="https://pendaftaran.example/"> -->
+<meta name="site-kind" content="other">
+<meta name="page-type" content="place">
+<meta name="page-kind" content="place">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wdth,wght@75..100,400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ asset('assets/system.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/motion/motion.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/layout/layout.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/portal.css') }}">
+@if($isHome)
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="{{ asset('assets/moments/moments.js') }}">
+<link rel="modulepreload" href="{{ asset('assets/moments/lib.js') }}">
+<link rel="modulepreload" href="{{ asset('assets/moments/picture-develops/moment.js') }}">
+@endif
+@stack('head')
 </head>
-<body class="min-h-screen bg-white font-sans text-slate-900 antialiased flex flex-col selection:bg-sky-100 selection:text-sky-900">
-    <header class="sticky top-0 z-40 border-b border-sky-100 bg-white/90 backdrop-blur-md">
-        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
-            <a href="{{ route('home') }}" class="flex items-center shrink-0 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">
-                <img src="{{ asset('images/logo-kumon.png') }}" alt="Logo Kumon" class="h-6 sm:h-7 w-auto object-contain" style="height: 26px; width: auto;">
-            </a>
-
-            <nav class="hidden md:flex items-center gap-7 text-sm font-medium" aria-label="Navigasi utama">
-                <a href="{{ route('programs.index') }}"
-                   class="transition-colors {{ request()->routeIs('programs.*') ? 'text-sky-700 font-bold' : 'text-slate-600 hover:text-slate-900' }}">
-                    Program
-                </a>
-                <a href="{{ route('home') }}#cara-daftar" class="text-slate-600 hover:text-slate-900 transition-colors">
-                    Cara Daftar
-                </a>
-                <a href="{{ route('home') }}#testimoni" class="text-slate-600 hover:text-slate-900 transition-colors">
-                    Testimoni
-                </a>
-                @auth('web')
-                    <a href="{{ route('dashboard') }}"
-                       class="transition-colors {{ request()->routeIs('dashboard') ? 'text-sky-700 font-bold' : 'text-slate-600 hover:text-slate-900' }}">
-                        Akun Saya
-                    </a>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="min-h-[40px] cursor-pointer rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                            Keluar
-                        </button>
-                    </form>
-                @else
-                    <a href="{{ route('login') }}" class="text-slate-700 font-semibold hover:text-sky-800 transition-colors">Masuk</a>
-                    <a href="{{ route('programs.index') }}"
-                       class="inline-flex min-h-[42px] items-center whitespace-nowrap rounded-lg bg-sky-900 px-5 py-2 text-xs font-semibold text-white hover:bg-slate-900 transition-colors">
-                        Daftar Sekarang
-                    </a>
-                @endauth
-            </nav>
-
-            <button
-                type="button"
-                id="mobile-menu-toggle"
-                aria-expanded="false"
-                aria-controls="mobile-menu"
-                aria-label="Buka menu navigasi"
-                class="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-sky-50 cursor-pointer transition-colors"
-            >
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </button>
+<body>
+<!-- type: place
+     deal: palette brand (#f8fafb/#161d24/#0077c8), type instrument-sans, hero place, nav plain, footer footer-columns, rhythm space, buttons arrow, mark stack
+     moments: picture-develops (#program) -->
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Lewati ke isi utama</a>
+    <a class="nav__logo" href="{{ $isHome ? '#top' : route('home') }}">
+      <span class="mark" data-mark="stack" aria-hidden="true"></span>Bimbel Cendekia
+    </a>
+    <nav class="nav__links" aria-label="Utama">
+      <div class="nav__item">
+        <a class="nav__link" href="{{ $isHome ? '#program' : route('programs.index') }}" @if(!$isHome && request()->routeIs('programs.*')) aria-current="page" @endif>Program</a>
+      </div>
+      <div class="nav__item">
+        <a class="nav__link" href="{{ $isHome ? '#alur' : route('home').'#alur' }}">Alur</a>
+      </div>
+      @auth('web')
+        <div class="nav__item">
+          <a class="nav__link" href="{{ route('dashboard') }}" @if(request()->routeIs('dashboard')) aria-current="page" @endif>Riwayat</a>
         </div>
+      @endauth
+    </nav>
+    <div class="nav__actions">
+      @auth('web')
+        <form method="POST" action="{{ route('logout') }}">
+          @csrf
+          <button type="submit" class="nav__link" style="background:none;border:0;cursor:pointer;">Keluar</button>
+        </form>
+      @else
+        <a class="nav__link" href="{{ route('login') }}" @if(request()->routeIs('login')) aria-current="page" @endif>Masuk</a>
+      @endauth
+      <a class="btn btn--primary" href="{{ route('programs.index') }}">Daftar kelas<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
 
-        <div id="mobile-menu" class="hidden md:hidden border-t border-sky-100 bg-white px-4 py-4 space-y-1.5">
-            <a href="{{ route('programs.index') }}" class="flex min-h-[44px] items-center rounded-lg px-3.5 text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-900">Program Belajar</a>
-            <a href="{{ route('home') }}#cara-daftar" class="flex min-h-[44px] items-center rounded-lg px-3.5 text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-900">Cara Daftar</a>
-            <a href="{{ route('home') }}#testimoni" class="flex min-h-[44px] items-center rounded-lg px-3.5 text-sm font-medium text-slate-700 hover:bg-sky-50 hover:text-sky-900">Testimoni</a>
-            @auth('web')
-                <a href="{{ route('dashboard') }}" class="flex min-h-[44px] items-center rounded-lg px-3.5 text-sm font-semibold text-sky-800 bg-sky-50/70">Akun Saya (Riwayat & Status)</a>
-                <form method="POST" action="{{ route('logout') }}" class="pt-2">
-                    @csrf
-                    <button type="submit" class="min-h-[44px] w-full cursor-pointer rounded-lg border border-slate-200 px-3.5 py-2.5 text-left text-sm font-semibold text-rose-700 hover:bg-rose-50">
-                        Keluar Akun
-                    </button>
-                </form>
-            @else
-                <div class="grid grid-cols-2 gap-2.5 pt-2">
-                    <a href="{{ route('login') }}" class="flex min-h-[44px] items-center justify-center rounded-lg border border-slate-200 bg-white px-3.5 text-sm font-semibold text-slate-800 hover:bg-slate-50">
-                        Masuk
-                    </a>
-                    <a href="{{ route('programs.index') }}" class="flex min-h-[44px] items-center justify-center rounded-lg bg-sky-900 px-3.5 text-sm font-semibold text-white hover:bg-slate-900">
-                        Daftar
-                    </a>
-                </div>
-            @endauth
-        </div>
-    </header>
+<main id="top" @if(!$isHome) class="page-main" @endif>
+  @if(!$isHome && session('status'))
+    <div class="wrap">
+      <div class="alert alert--ok" role="status">{{ session('status') }}</div>
+    </div>
+  @endif
 
-    <main class="flex-1">
-        @if (session('status'))
-            <div class="mx-auto max-w-6xl px-4 pt-5 sm:px-6">
-                <div class="rounded-xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-900" role="status">
-                    {{ session('status') }}
-                </div>
-            </div>
-        @endif
+  @yield('content')
+</main>
 
-        @yield('content')
-    </main>
+@hasSection('footer')
+  @yield('footer')
+@else
+  <footer class="inner-footer" id="contact">
+    <div class="wrap inner-footer__row">
+      <span>&copy; {{ date('Y') }} Bimbel Cendekia. Pendaftaran kelas tatap muka satu cabang.</span>
+      <div class="inner-footer__links">
+        <a href="{{ route('home') }}">Beranda</a>
+        <a href="{{ route('programs.index') }}">Program dan jadwal</a>
+        @auth('web')
+          <a href="{{ route('dashboard') }}">Riwayat pendaftaran</a>
+        @else
+          <a href="{{ route('login') }}">Masuk akun</a>
+        @endauth
+        <a href="{{ route('admin.login') }}">Portal admin</a>
+      </div>
+    </div>
+  </footer>
+@endif
 
-    <footer class="border-t border-sky-100 bg-sky-50/40 mt-20">
-        <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-xs text-slate-600">
-                <div class="space-y-2.5">
-                    <img src="{{ asset('images/logo-kumon.png') }}" alt="Logo Kumon" class="h-5 w-auto object-contain" style="height: 20px; width: auto;">
-                    <p class="leading-relaxed text-slate-600">
-                        Lembaga bimbingan belajar tatap muka resmi (1 cabang) untuk jenjang SD, SMP, SMA, dan persiapan UTBK.
-                    </p>
-                </div>
+@if($isHome)
+<nav class="actionbar" aria-label="Tindakan utama">
+  <a class="btn btn--primary" href="{{ route('programs.index') }}">Daftar kelas<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+</nav>
+@endif
 
-                <div>
-                    <p class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Alamat & Operasional</p>
-                    <p class="mt-2.5 leading-relaxed">Jl. Pendidikan Raya No. 10, Cabang Utama</p>
-                    <p class="mt-1 text-slate-500">Senin - Sabtu: 08.00 - 18.00 WIB</p>
-                </div>
+<script type="module" src="{{ asset('assets/system.js') }}"></script>
+<script type="module" src="{{ asset('assets/motion/motion.js') }}"></script>
+<script type="module" src="{{ asset('assets/layout/layout.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const navLinks = document.querySelector('.nav__links');
+  if (!navLinks) return;
+  const links = Array.from(navLinks.querySelectorAll('.nav__link'));
+  if (!links.length) return;
 
-                <div>
-                    <p class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Kontak Resmi</p>
-                    <p class="mt-2.5">WhatsApp Admin: <span class="font-semibold text-slate-800">0812-3456-7890</span></p>
-                    <p class="mt-1">Email: <span class="font-semibold text-slate-800">info@bimbel.test</span></p>
-                </div>
+  let activeLink = links.find(a => a.getAttribute('aria-current') === 'page') || null;
 
-                <div>
-                    <p class="font-bold text-slate-900 uppercase tracking-wider text-[11px]">Kebijakan & Akses</p>
-                    <ul class="mt-2.5 space-y-1.5 font-medium">
-                        <li><a href="{{ route('programs.index') }}" class="hover:text-sky-800">Katalog Program & Harga</a></li>
-                        <li><span class="text-slate-500">Kebijakan Privasi (UU PDP)</span></li>
-                        <li><span class="text-slate-500">Syarat & Kebijakan Non-Refund</span></li>
-                        <li><a href="{{ route('admin.login') }}" class="text-sky-800 hover:underline">Portal Staf Admin</a></li>
-                    </ul>
-                </div>
-            </div>
+  function setActive(link) {
+    activeLink = link;
+    links.forEach(a => a.classList.toggle('is-nav-active', a === link));
+  }
 
-            <div class="mt-8 border-t border-sky-100 pt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between text-[11px] text-slate-500 gap-2">
-                <p>&copy; {{ date('Y') }} Website Pendaftaran Bimbel. Seluruh kelas berlangsung tatap muka.</p>
-                <p>Pembayaran lunas di muka tidak dapat di-refund kecuali kelas dibatalkan bimbel atau terjadi pembayaran ganda.</p>
-            </div>
-        </div>
-    </footer>
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      const href = link.getAttribute('href') || '';
+      if (!href.startsWith('#')) return;
+      setActive(link);
+    });
+  });
 
-    <script>
-        document.getElementById('mobile-menu-toggle')?.addEventListener('click', function () {
-            const menu = document.getElementById('mobile-menu');
-            const expanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', String(!expanded));
-            menu?.classList.toggle('hidden');
-        });
-    </script>
-    @stack('scripts')
+  const isHome = document.documentElement.dataset.pageMode === 'short';
+  if (isHome) {
+    const programEl = document.getElementById('program');
+    const alurEl = document.getElementById('alur');
+    const progLink = links.find(a => a.getAttribute('href') === '#program');
+    const alurLink = links.find(a => a.getAttribute('href') === '#alur');
+
+    function syncNavOnScroll() {
+      if (!programEl) return;
+      const vh = window.innerHeight;
+      const progRect = programEl.getBoundingClientRect();
+      const alurRect = alurEl ? alurEl.getBoundingClientRect() : null;
+
+      if (progRect.top > vh * 0.45) {
+        setActive(null);
+        return;
+      }
+
+      if (alurRect && alurRect.top <= Math.max(160, vh * 0.35)) {
+        setActive(alurLink);
+        return;
+      }
+
+      setActive(progLink);
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        syncNavOnScroll();
+      });
+    }, { passive: true });
+
+    syncNavOnScroll();
+  }
+});
+</script>
+@stack('scripts')
 </body>
 </html>

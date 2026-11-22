@@ -1,41 +1,38 @@
 @extends('layouts.public')
 
-@section('title', 'Buat Password Baru')
+@section('title', 'Buat Password Baru — Bimbel Cendekia')
+@section('meta_description', 'Simpan password baru untuk akun pendaftar Anda.')
 
 @section('content')
-<div class="mx-auto max-w-sm px-4 py-12 sm:py-16">
-    <div class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8">
-        <h1 class="text-xl font-bold text-slate-900">Buat Password Baru</h1>
+<div class="wrap">
+  <div class="auth-box">
+    <h1 style="font-size: var(--t-h2); margin-bottom: var(--s-5);">Buat password baru</h1>
 
-        <form method="POST" action="{{ route('password.update') }}" class="mt-6 space-y-4">
-            @csrf
-            <input type="hidden" name="token" value="{{ $token }}">
+    <form method="POST" action="{{ route('password.update') }}" class="form" style="grid-template-columns: 1fr;">
+      @csrf
+      <input type="hidden" name="token" value="{{ $token }}">
 
-            <div>
-                <label for="email" class="block text-xs font-semibold text-slate-700">Email</label>
-                <input id="email" name="email" type="email" value="{{ old('email', $email) }}" required
-                       class="mt-1.5 block w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20">
-                @error('email') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="{{ old('email', $email) }}" required autocomplete="email" @error('email') aria-invalid="true" aria-describedby="err-email" @enderror>
+        @error('email') <span id="err-email" class="field__error">{{ $message }}</span> @enderror
+      </div>
 
-            <div>
-                <label for="password" class="block text-xs font-semibold text-slate-700">Password Baru</label>
-                <input id="password" name="password" type="password" required
-                       class="mt-1.5 block w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20">
-                @error('password') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
+      <div class="field">
+        <label for="password">Password baru</label>
+        <input id="password" name="password" type="password" required autocomplete="new-password" @error('password') aria-invalid="true" aria-describedby="err-password" @enderror>
+        @error('password') <span id="err-password" class="field__error">{{ $message }}</span> @enderror
+      </div>
 
-            <div>
-                <label for="password_confirmation" class="block text-xs font-semibold text-slate-700">Konfirmasi Password Baru</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" required
-                       class="mt-1.5 block w-full rounded-lg border border-slate-200 px-3.5 py-2.5 text-sm focus:border-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-500/20">
-            </div>
+      <div class="field">
+        <label for="password_confirmation">Ulangi password baru</label>
+        <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password">
+      </div>
 
-            <button type="submit"
-                    class="min-h-[44px] w-full cursor-pointer rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-sky-700 transition-colors">
-                Simpan Password
-            </button>
-        </form>
-    </div>
+      <div class="btn-row">
+        <button type="submit" class="btn btn--primary" style="width:100%;">Simpan password</button>
+      </div>
+    </form>
+  </div>
 </div>
 @endsection

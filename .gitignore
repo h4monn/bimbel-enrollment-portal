@@ -10,6 +10,7 @@
 /.idea
 /.nova
 /.phpunit.cache
+/.taste-skill
 /.vscode
 /.zed
 /auth.json

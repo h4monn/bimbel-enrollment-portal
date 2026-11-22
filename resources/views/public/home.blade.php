@@ -1,175 +1,235 @@
 @extends('layouts.public')
 
-@section('title', 'Bimbingan Belajar Tatap Muka')
+@section('title', 'Bimbel Cendekia: bimbingan belajar tatap muka SD hingga UTBK')
+@section('meta_description', 'Pendaftaran kelas tatap muka SD, SMP, SMA, dan UTBK di satu cabang. Lihat jadwal ruang, sisa kuota langsung, dan bayar lunas dalam 24 jam.')
 
 @section('content')
-{{-- Hero Section (Gradasi Biru Muda Lembut) --}}
-<section class="border-b border-sky-100 bg-gradient-to-b from-sky-50 via-sky-50/40 to-white">
-    <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24 text-center">
-        <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl max-w-3xl mx-auto leading-[1.15]">
-            Daftar Bimbingan Belajar Tatap Muka <span class="text-sky-700">Lebih Cepat</span> dan Transparan
-        </h1>
-
-        <p class="mt-5 text-base text-slate-600 max-w-xl mx-auto leading-relaxed">
-            Pilih program SD, SMP, SMA, atau UTBK, pantau sisa kuota kelas secara real-time, dan selesaikan pembayaran langsung dari HP.
-        </p>
-
-        <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="{{ route('programs.index') }}"
-               class="inline-flex min-h-[46px] w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-sky-900 px-7 py-3 text-sm font-semibold text-white hover:bg-slate-900 transition-colors">
-                Lihat Program
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
-            @guest('web')
-                <a href="{{ route('register') }}"
-                   class="inline-flex min-h-[46px] w-full sm:w-auto items-center justify-center rounded-lg border border-sky-200 bg-white px-7 py-3 text-sm font-semibold text-sky-900 hover:bg-sky-50 transition-colors">
-                    Buat Akun Pendaftar
-                </a>
-            @endguest
+  <section class="hero hero--place" data-enter aria-labelledby="hero-h">
+    <img class="hero__bg"
+         src="{{ asset('assets/img/photo-c877.jpg') }}"
+         srcset="{{ asset('assets/img/photo-c877-500.jpg') }} 500w, {{ asset('assets/img/photo-c877-960.jpg') }} 960w, {{ asset('assets/img/photo-c877-1280.jpg') }} 1280w, {{ asset('assets/img/photo-c877.jpg') }} 1920w"
+         sizes="(max-width: 639px) 188vw, 100vw"
+         width="1920" height="1280"
+         alt="Tumpukan buku pelajaran dan lembar latihan belajar di meja"
+         style="--ly-pos: 50% 50%"
+         fetchpriority="high" decoding="async"
+         data-phone-fill data-source="library-057" data-subject="desk">
+    <div class="wrap">
+      <div class="hero-text">
+        <div class="hero__text">
+          <h1 id="hero-h">Bimbingan belajar tatap muka SD hingga UTBK</h1>
+          <p class="hero__lead">Cek jadwal ruang dan sisa kursi langsung, lalu selesaikan biaya lunas dalam 24 jam.</p>
+          <div class="btn-row">
+            <a class="btn btn--primary" href="{{ route('programs.index') }}">Daftar kelas<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+          </div>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 
-{{-- Alur Pendaftaran 4 Langkah --}}
-<section id="cara-daftar" class="mx-auto max-w-6xl px-4 py-14 sm:px-6 border-b border-slate-100">
-    <div class="text-center max-w-xl mx-auto">
-        <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Alur Pendaftaran</p>
-        <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Daftar Kelas dalam 4 Langkah</h2>
-    </div>
+  <section class="section" id="program" aria-labelledby="program-h">
+    <div class="wrap">
+      <div class="section-head section-head--row">
+        <h2 id="program-h">Program kelas dan biaya</h2>
+        <a class="link" href="{{ route('programs.index') }}">Lihat semua kelas</a>
+      </div>
 
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        @foreach ([
-            ['num' => '01', 'title' => 'Pilih Program & Kelas', 'desc' => 'Lihat jadwal tatap muka, nama pengajar, ruang kelas, dan sisa kuota real-time.'],
-            ['num' => '02', 'title' => 'Masuk & Isi Data Siswa', 'desc' => 'Login dengan Google atau email (langsung aktif), lalu isi data siswa dan wali.'],
-            ['num' => '03', 'title' => 'Bayar Lunas (24 Jam)', 'desc' => 'Kuota dikunci sementara selama 24 jam. Bayar praktis lewat VA, QRIS, atau E-Wallet.'],
-            ['num' => '04', 'title' => 'Konfirmasi Otomatis', 'desc' => 'Bukti lunas dan nomor pendaftaran langsung dikirim ke Email serta WhatsApp.'],
-        ] as $step)
-            <div class="rounded-xl border border-sky-200/80 bg-sky-50/40 p-5">
-                <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-sky-900 font-mono text-xs font-bold text-white">
-                    {{ $step['num'] }}
-                </span>
-                <h3 class="mt-3.5 text-sm font-bold text-slate-900">{{ $step['title'] }}</h3>
-                <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">{{ $step['desc'] }}</p>
-            </div>
-        @endforeach
-    </div>
-</section>
-
-{{-- Keunggulan Bimbel --}}
-<section class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-            <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Keunggulan Kami</p>
-            <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Dirancang untuk Kenyamanan Orang Tua</h2>
-        </div>
-        <p class="text-sm text-slate-600 max-w-sm">Informasi biaya, jadwal, dan sisa kursi terbuka sejak awal tanpa harus menunggu balasan chat.</p>
-    </div>
-
-    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        @php
-            $features = [
-                ['title' => 'Pengajar Spesialis', 'desc' => 'Dibimbing langsung oleh tutor berpengalaman sesuai jenjang pendidikan.'],
-                ['title' => 'Kuota Kelas Terbatas', 'desc' => 'Kapasitas ruang dibatasi agar setiap siswa mendapat perhatian optimal.'],
-                ['title' => 'Biaya & Jadwal Transparan', 'desc' => 'Harga penuh, hari, jam belajar, dan ruangan tercantum jelas sebelum daftar.'],
-                ['title' => 'Notifikasi Real-Time', 'desc' => 'Status pembayaran terverifikasi otomatis dengan konfirmasi Email & WhatsApp.'],
-            ];
-        @endphp
-        @foreach ($features as $feature)
-            <div class="rounded-xl border border-sky-200 bg-white p-6 transition-colors hover:bg-sky-50/30">
-                <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 text-sky-800">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                    </svg>
-                </div>
-                <h3 class="mt-4 text-sm font-bold text-slate-900">{{ $feature['title'] }}</h3>
-                <p class="mt-1.5 text-xs text-slate-600 leading-relaxed">{{ $feature['desc'] }}</p>
-            </div>
-        @endforeach
-    </div>
-</section>
-
-{{-- Katalog Program Unggulan --}}
-@if ($featuredPrograms->isNotEmpty())
-<section class="border-y border-sky-100 bg-sky-50/60 py-16">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="flex items-end justify-between gap-4">
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Katalog Program</p>
-                <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Program Belajar Tersedia</h2>
-            </div>
-            <a href="{{ route('programs.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-sky-800 hover:underline">
-                Lihat Semua Program
-                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-            </a>
-        </div>
-
-        <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="grid grid--top home-offer-grid">
+        <div class="span-6 home-tabs-wrap">
+          <div class="level-tabs" role="tablist" aria-label="Filter jenjang program">
+            <button type="button" class="level-tab" role="tab" id="tab-semua" aria-selected="true" aria-controls="panel-semua">Semua</button>
             @foreach ($featuredPrograms as $program)
-                <div class="flex flex-col justify-between rounded-xl border border-sky-200 bg-white p-5">
-                    <div>
-                        <span class="inline-block rounded-md bg-sky-100 px-2.5 py-0.5 text-[11px] font-bold text-sky-800">
-                            {{ $program->education_level }}
-                        </span>
-                        <h3 class="mt-3 text-base font-bold text-slate-900">{{ $program->name }}</h3>
-                        <p class="mt-1.5 text-xs text-slate-600 line-clamp-3 leading-relaxed">{{ $program->description }}</p>
-                    </div>
-                    <div class="mt-5 border-t border-slate-100 pt-4">
-                        <p class="text-[11px] text-slate-500">{{ $program->duration }}</p>
-                        <p class="mt-0.5 text-lg font-extrabold tabular-nums text-slate-900">Rp {{ number_format($program->price, 0, ',', '.') }}</p>
-                        <a href="{{ route('programs.show', $program) }}"
-                           class="mt-3.5 flex min-h-[44px] w-full items-center justify-center rounded-lg bg-sky-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-900 transition-colors">
-                            Lihat Kelas & Kuota
-                        </a>
-                    </div>
-                </div>
+              <button type="button" class="level-tab" role="tab" id="tab-{{ strtolower($program->education_level) }}" aria-selected="false" aria-controls="panel-{{ strtolower($program->education_level) }}">{{ $program->education_level }}</button>
             @endforeach
+            <span class="level-tabs__indicator" aria-hidden="true"></span>
+          </div>
+
+          <div id="panel-semua" class="level-panel" role="tabpanel" aria-labelledby="tab-semua">
+            <ul class="rows" data-assumed>
+              @forelse ($featuredPrograms as $program)
+                <li>
+                  <a class="row-link" href="{{ route('programs.show', $program) }}">
+                    <span class="rows__name">{{ $program->name }}</span>
+                    <span class="rows__value">Rp {{ number_format($program->price, 0, ',', '.') }}</span>
+                  </a>
+                </li>
+              @empty
+                <li>
+                  <span class="rows__name">Program periode baru</span>
+                  <span class="rows__value">Segera dibuka</span>
+                </li>
+              @endforelse
+            </ul>
+          </div>
+
+          @foreach ($featuredPrograms as $program)
+            @php
+              $activeClasses = $program->classes;
+              $totalRemaining = $activeClasses->sum(fn ($c) => max(0, $c->quota - $c->enrolled_count));
+              $firstClass = $activeClasses->first();
+            @endphp
+            <div id="panel-{{ strtolower($program->education_level) }}" class="level-panel" role="tabpanel" aria-labelledby="tab-{{ strtolower($program->education_level) }}" hidden>
+              <ul class="rows" data-assumed>
+                <li>
+                  <a class="row-link" href="{{ route('programs.show', $program) }}">
+                    <span class="rows__name">{{ $program->name }}</span>
+                    <span class="rows__value">Lihat kelas &rarr;</span>
+                  </a>
+                </li>
+                <li>
+                  <span class="rows__name">Biaya lunas</span>
+                  <span class="rows__value">Rp {{ number_format($program->price, 0, ',', '.') }}</span>
+                </li>
+                <li>
+                  <span class="rows__name">Durasi program</span>
+                  <span class="rows__value">{{ $program->duration }}</span>
+                </li>
+                <li>
+                  <span class="rows__name">{{ $firstClass ? $firstClass->schedule_days : 'Jadwal ruang' }}</span>
+                  <span class="rows__value">{{ $totalRemaining > 0 ? $totalRemaining . ' kursi tersedia' : 'Kuota penuh' }}</span>
+                </li>
+              </ul>
+            </div>
+          @endforeach
         </div>
-    </div>
-</section>
-@endif
 
-{{-- Testimoni & CTA Penutup --}}
-<section id="testimoni" class="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-    <div class="text-center max-w-xl mx-auto">
-        <p class="text-xs font-bold uppercase tracking-wider text-sky-700">Testimoni</p>
-        <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Dipercaya Orang Tua & Siswa</h2>
+        <figure class="pl-photo span-6" style="--pl-r: 1.5" data-moment="picture-develops">
+          <img src="{{ asset('assets/img/photo-d183.jpg') }}"
+               srcset="{{ asset('assets/img/photo-d183-500.jpg') }} 500w, {{ asset('assets/img/photo-d183-960.jpg') }} 960w, {{ asset('assets/img/photo-d183.jpg') }} 1280w"
+               sizes="(max-width: 639px) 188vw, (max-width: 1023px) 188vw, 50vw"
+               width="1280" height="853"
+               alt="Buku tulis terbuka dengan pensil kayu di atas meja belajar"
+               loading="lazy" decoding="async"
+               data-source="library-057" data-subject="desk">
+        </figure>
+      </div>
     </div>
+  </section>
 
-    <div class="mt-8 grid gap-5 md:grid-cols-3">
-        @php
-            $testimonials = [
-                ['initial' => 'IR', 'name' => 'Ibu Ratna', 'role' => 'Orang Tua Siswa SMP', 'quote' => 'Daftar lewat HP sangat praktis. Sisa kuota dan jadwal langsung terlihat tanpa perlu menunggu balasan chat.'],
-                ['initial' => 'DP', 'name' => 'Dimas Pratama', 'role' => 'Siswa Kelas 12 (UTBK)', 'quote' => 'Kelas tatap mukanya fokus karena jumlah peserta dibatasi. Tutor sangat membantu saat diskusi soal.'],
-                ['initial' => 'BH', 'name' => 'Bapak Hendra', 'role' => 'Orang Tua Siswa SD', 'quote' => 'Biaya dan jadwal transparan dari awal. Setelah bayar, konfirmasi langsung masuk ke WhatsApp dan Email.'],
-            ];
-        @endphp
-        @foreach ($testimonials as $item)
-            <figure class="rounded-xl border border-slate-200 bg-white p-6">
-                <blockquote class="text-xs text-slate-600 leading-relaxed">"{{ $item['quote'] }}"</blockquote>
-                <figcaption class="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-sky-100 text-xs font-bold text-sky-800">
-                        {{ $item['initial'] }}
-                    </span>
-                    <div>
-                        <p class="text-xs font-bold text-slate-900">{{ $item['name'] }}</p>
-                        <p class="text-[11px] text-slate-500">{{ $item['role'] }}</p>
-                    </div>
-                </figcaption>
-            </figure>
-        @endforeach
-    </div>
+  <section class="section" id="alur" aria-labelledby="alur-h">
+    <div class="wrap">
+      <div class="section-head section-head--row">
+        <h2 id="alur-h">Alur pendaftaran kelas</h2>
+        <a class="link" href="{{ route('programs.index') }}">Mulai pilih jadwal</a>
+      </div>
 
-    <div class="mt-14 rounded-xl border border-sky-200 bg-sky-50 px-6 py-10 text-center sm:px-12">
-        <h2 class="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">Siap Memulai Periode Belajar Baru?</h2>
-        <p class="mt-2 text-sm text-slate-600 max-w-md mx-auto">Pilih kelas yang sesuai jadwal siswa dan amankan kursi sebelum kuota penuh.</p>
-        <a href="{{ route('programs.index') }}"
-           class="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-lg bg-sky-900 px-7 py-3 text-sm font-semibold text-white hover:bg-slate-900 transition-colors">
-            Lihat Program Sekarang
-        </a>
+      <ol class="flow-steps">
+        <li class="flow-step">
+          <span class="flow-step__num">01</span>
+          <h3 class="flow-step__title">Pilih jadwal kelas</h3>
+          <p class="flow-step__desc">Periksa program, jam ruang belajar, dan sisa kursi langsung pada katalog kelas.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-step__num">02</span>
+          <h3 class="flow-step__title">Masuk akun wali</h3>
+          <p class="flow-step__desc">Daftar atau masuk menggunakan email maupun akun Google untuk menyimpan riwayat.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-step__num">03</span>
+          <h3 class="flow-step__title">Isi data siswa</h3>
+          <p class="flow-step__desc">Lengkapi satu formulir biodata siswa dan nomor kontak aktif, lalu kunci kursi.</p>
+        </li>
+        <li class="flow-step">
+          <span class="flow-step__num">04</span>
+          <h3 class="flow-step__title">Bayar lunas 24 jam</h3>
+          <p class="flow-step__desc">Selesaikan pembayaran penuh sebelum batas 24 jam agar kursi terkonfirmasi otomatis.</p>
+        </li>
+      </ol>
     </div>
-</section>
+  </section>
 @endsection
+
+@section('footer')
+<footer class="footer home-footer ground-surface" id="lokasi" aria-label="Informasi cabang dan navigasi bawah">
+  <div class="wrap">
+    <div class="home-footer__grid">
+      <div class="home-footer__col home-footer__brand">
+        <a class="nav__logo" href="#top">
+          <span class="mark" data-mark="stack" aria-hidden="true"></span>Bimbel Cendekia
+        </a>
+        <p class="home-footer__text">Satu cabang tatap muka SD, SMP, SMA, dan UTBK. Seluruh pertemuan berlangsung di ruang kelas.</p>
+      </div>
+
+      <div class="home-footer__col">
+        <h3 class="home-footer__title">Jam operasional</h3>
+        <dl class="hours home-footer__hours" data-assumed>
+          <dt>Senin–Jumat</dt><dd>08.00–18.00</dd>
+          <dt>Sabtu</dt><dd>08.00–15.00</dd>
+          <dt>Minggu</dt><dd>Tutup</dd>
+        </dl>
+      </div>
+
+      <div class="home-footer__col">
+        <h3 class="home-footer__title">Ketentuan pembayaran</h3>
+        <p class="home-footer__text">Biaya dibayar lunas tanpa cicilan. Pengembalian dana berlaku jika kelas dibatalkan bimbel atau terjadi pembayaran ganda.</p>
+      </div>
+
+      <div class="home-footer__col">
+        <h3 class="home-footer__title">Tautan</h3>
+        <ul class="home-footer__nav">
+          <li><a href="{{ route('programs.index') }}">Program dan jadwal</a></li>
+          <li><a href="{{ route('register') }}">Buat akun wali</a></li>
+          <li><a href="{{ route('login') }}">Masuk akun</a></li>
+          <li><a href="{{ route('dashboard') }}">Riwayat pendaftaran</a></li>
+          <li><a href="{{ route('admin.login') }}">Portal admin</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__legal home-footer__legal">
+      <span>&copy; {{ date('Y') }} Bimbel Cendekia</span>
+      <details class="credits">
+        <summary>Photographs via Wikimedia Commons</summary>
+        <p>Stacked books by Nenad Stojkovic (CC BY 2.0), open notebook by Jan Kahánek (CC0), via Wikimedia Commons.</p>
+      </details>
+    </div>
+  </div>
+</footer>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const list = document.querySelector('#program .level-tabs');
+  if (!list) return;
+  const tabs = Array.from(list.querySelectorAll('[role="tab"]'));
+  const indicator = list.querySelector('.level-tabs__indicator');
+
+  function moveIndicator(tab, instant) {
+    if (!indicator || !tab) return;
+    if (instant) indicator.style.transition = 'none';
+    indicator.style.width = tab.offsetWidth + 'px';
+    indicator.style.transform = 'translateX(' + tab.offsetLeft + 'px)';
+    if (instant) {
+      indicator.getBoundingClientRect();
+      indicator.style.transition = '';
+    }
+  }
+
+  function animatePanel(tab) {
+    const id = tab.getAttribute('aria-controls');
+    const panel = id ? document.getElementById(id) : null;
+    if (!panel) return;
+    panel.classList.remove('is-entering');
+    void panel.offsetWidth;
+    panel.classList.add('is-entering');
+  }
+
+  function syncActive(instant) {
+    const active = tabs.find(t => t.getAttribute('aria-selected') === 'true') || tabs[0];
+    if (!active) return;
+    moveIndicator(active, instant);
+    if (!instant) animatePanel(active);
+  }
+
+  const mo = new MutationObserver(() => syncActive(false));
+  tabs.forEach(t => mo.observe(t, { attributes: true, attributeFilter: ['aria-selected'] }));
+
+  window.addEventListener('resize', () => syncActive(true));
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => syncActive(true));
+  }
+  syncActive(true);
+});
+</script>
+@endpush
