@@ -1,11 +1,11 @@
 # Bimbel Enrollment Portal
 
-A mobile-first tutoring center registration portal built with **Laravel 13** and **Tailwind CSS v4**, featuring real-time class quota tracking, atomic seat reservation (`lockForUpdate`), Midtrans Snap payment integration, automated WhatsApp & Email notifications, and an operational Admin Dashboard.
+A responsive tutoring center registration portal built with **Laravel 13**, featuring real-time class quota tracking, atomic seat reservation (`lockForUpdate`), Midtrans Snap payment integration, automated WhatsApp & Email notifications, and an operational Admin Dashboard.
 
 ## Features
 
 ### Public Portal (Parents / Guardians & Students)
-* **Landing Page & Program Catalog:** Overview of the tutoring center, 4-step enrollment flow, level filtering (`SD`, `SMP`, `SMA`, `UTBK`, `UMUM`), and real-time class details (schedule, instructor, room, and remaining seats).
+* **Landing Page & Program Catalog:** Interactive level tabs on the landing page, dedicated 4-step enrollment flow, catalog level filtering (`SD`, `SMP`, `SMA`, `UTBK`, `UMUM`), and real-time class details (schedule, instructor, room, and remaining seats).
 * **Flexible Authentication:** Email/Password registration & login (instantly active with password reset support) alongside **Google OAuth** via Laravel Socialite.
 * **Enrollment Form & Non-Refund Policy:** Student and guardian data collection, selected class summary, and explicit agreement to terms and the non-refundable payment policy (with exceptions for class cancellation by the center or duplicate payment).
 * **24-Hour Midtrans Snap Checkout:** Full upfront payment supporting Virtual Accounts, QRIS, and E-Wallets with a live 24-hour countdown timer.
@@ -25,7 +25,7 @@ A mobile-first tutoring center registration portal built with **Laravel 13** and
 
 ## Tech Stack
 * **Backend:** Laravel 13 (PHP 8.4), Eloquent ORM, Queue, Task Scheduler
-* **Frontend:** Laravel Blade, Tailwind CSS v4, Vite
+* **Frontend:** Laravel Blade, custom modular CSS (`public/assets/`), `Instrument Sans`, vanilla ES modules
 * **Database:** MySQL (recommended for production) / SQLite (local testing)
 * **Integrations:** Laravel Socialite, Midtrans PHP SDK, Maatwebsite Excel, Fonnte WhatsApp API, Resend / SMTP
 
@@ -65,26 +65,15 @@ A mobile-first tutoring center registration portal built with **Laravel 13** and
    FONNTE_TOKEN=
    ```
 
-4. **Run database migrations:**
+4. **Run database migrations and seed initial data:**
    ```bash
-   php artisan migrate
+   php artisan migrate --seed
    ```
+   This seeds the sample programs/classes and the default Super Admin account:
+   * **Email:** `admin@bimbel.test`
+   * **Password:** `password123`
 
-5. **Create an initial Super Admin account (via Tinker):**
-   ```bash
-   php artisan tinker
-   ```
-   ```php
-   \App\Models\Admin::create([
-       'name' => 'Super Admin',
-       'email' => 'admin@bimbel.test',
-       'password' => 'password123',
-       'role' => 'super_admin',
-       'is_active' => true,
-   ]);
-   ```
-
-6. **Start the local server, queue worker, and scheduler:**
+5. **Start the local server, queue worker, and scheduler:**
    ```bash
    php artisan serve
    php artisan queue:work
